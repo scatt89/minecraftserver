@@ -1,0 +1,36 @@
+---
+- hosts: mini2
+  become : yes
+
+  vars_files:
+    - vars.yml
+    - .keys.yml
+
+  pre_tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+  handlers:
+    - name: restart minecraft service
+      systemd:
+        name: minecraft
+        state: restarted
+        daemon_reload: yes
+
+  tasks:
+    - import_tasks: hamachi/install.yml
+      tags: ['hamachi', 'hamachi_installation']
+    - import_tasks: hamachi/configure.yml
+      tags: ['hamachi', 'hamachi_configuration']
+    - import_tasks: java/install.yml
+      tags: java
+    - import_tasks: minecraft/minecraft.yml
+      tags: minecraft
+    - import_tasks: backups/local_backup.yml
+      tags: backup_local
+    - import_tasks: backups/remote_backup.yml
+      tags: backup_remote
+    - import_tasks: system/system.yml
+      tags: system_settings
+

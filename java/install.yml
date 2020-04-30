@@ -1,0 +1,6 @@
+---
+- name: Install default jre headless
+  apt:
+    name: default-jre-headless
+    state: present
+    update-cache: yes

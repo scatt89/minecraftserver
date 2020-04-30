@@ -1,0 +1,79 @@
+---
+- name: Create the minecraft group
+  group:
+    name: minecraft
+    system: yes
+    state: present
+- name: Create the minecraft user
+  user:
+    name: minecraft
+    group: minecraft
+    shell: /bin/bash
+    home: "{{ minecraft_home_dir }}"
+    system: yes
+    state: present
+- name: Create directories for minecraft server
+  file:
+    path: "{{ minecraft_home_dir }}/{{ item }}"
+    state: directory
+    owner: minecraft
+    group: minecraft
+  with_items:
+    - backups
+    - tools
+    - server
+- name: Install mcron dependencies
+  apt:
+    name:
+      - git
+      - build-essential
+    state: present
+- name: Download mcrcon utility
+  git:
+    repo: "{{ minecraft_mcrcon_url }}"
+    dest: "{{ minecraft_mcrcon_dir }}"
+- name: Compile mcron
+  command: >
+    gcc -std=gnu11 -pedantic -Wall -Wextra -O2 -s -o mcrcon mcrcon.c
+    chdir="{{ minecraft_mcrcon_dir }}"
+    creates="{{ minecraft_mcrcon_dir }}/mcrcon"
+- name: Download minecraft server jar
+  get_url:
+    url: "{{ minecraft_server_url }}"
+    dest: "{{ minecraft_server_dir }}"
+    mode: '0550'
+- name: Run minecraft server for the first time in order to generate server files
+  command: >
+    java -Xmx512M -Xms512M -jar server.jar nogui
+    chdir="{{ minecraft_server_dir }}"
+    creates="{{ minecraft_server_dir }}/eula.txt"
+- name: Change ownership of service files
+  file:
+    path: "{{ minecraft_server_dir }}"
+    state: directory
+    recurse: yes
+    owner: minecraft
+    group: minecraft
+- name: Accept Minecraft EULA
+  lineinfile:
+    dest: "{{ minecraft_server_dir }}/eula.txt"
+    regexp: "^eula="
+    line: "eula=true"
+    state: present
+- name: Modify server ip with the current ip address
+  lineinfile:
+    dest: "{{ minecraft_server_dir }}/server.properties"
+    regexp: "^server-ip="
+    line: "server-ip={{ hamachi_ip_address.stdout }}"
+    state: present
+- name: Creates a service file
+  template:
+    src: templates/minecraft.service.j2
+    dest: /etc/systemd/system/minecraft.service
+    mode: '0644'
+  notify: restart minecraft service
+- name: Make sure minecraft service is running and enabled with restarts
+  systemd:
+    name: minecraft
+    state: started
+    enabled: yes

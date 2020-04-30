@@ -1,0 +1,44 @@
+---
+- name: Install pip and dependencies
+  apt:
+    name:
+      - python3-pip
+      - python-setuptools
+    state: present
+- name: Install upload_backup.py dependencies dependencies
+  pip:
+    name:
+      - google-api-python-client
+      - google-auth-httplib2
+      - google-auth-oauthlib
+      - pyyaml
+    state: present
+    executable: pip3
+- name: Copy upload_backup.py script
+  copy:
+    src: backups/upload_backup.py
+    dest: "{{ minecraft_tools_dir }}/upload_backup.py"
+    owner: minecraft
+    group: minecraft
+    mode: '0555'
+- name: Copy upload_backup_config.yml file
+  template:
+    src: templates/upload_backup_config.yml.j2
+    dest: "{{ minecraft_tools_dir }}/upload_backup_config.yml"
+    owner: minecraft
+    group: minecraft
+    mode: '0444'
+- name: Copy token.picke file
+  copy:
+    src: backups/token.pickle
+    dest: "{{ minecraft_tools_dir }}/token.pickle"
+    owner: minecraft
+    group: minecraft
+    mode: '0777'
+- name: Creates a cron task to upload the backup
+  cron:
+    name: "minecraft server upload backup"
+    minute: "15"
+    hour: "23"
+    job: "cd {{ minecraft_tools_dir }} && python3 upload_backup.py"
+    user: minecraft

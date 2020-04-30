@@ -1,0 +1,7 @@
+---
+- name: Uncompress backup files in the server directories
+  unarchive:
+    src: ./backups/latest.tar.gz
+    dest: "{{ minecraft_home_dir }}"
+    owner: minecraft
+  notify: restart minecraft service

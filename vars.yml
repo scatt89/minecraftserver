@@ -1,0 +1,21 @@
+---
+minecraft_home_dir: /opt/minecraft
+minecraft_tools_dir: "{{ minecraft_home_dir }}/tools"
+minecraft_server_dir: "{{ minecraft_home_dir }}/server"
+minecraft_backups_dir: "{{ minecraft_home_dir }}/backups"
+minecraft_mcrcon_dir: "{{ minecraft_tools_dir }}/mcrcon"
+minecraft_mcrcon_url: https://github.com/Tiiffi/mcrcon.git
+minecraft_server_url: https://launcher.mojang.com/v1/objects/bb2b6b1aefcd70dfd1892149ac3a215f6c636b07/server.jar
+minecraft_ip_server: localhost
+google_drive_backup_max_uploaded: 5
+google_drive_backup_scope: https://www.googleapis.com/auth/drive
+
+java_home: /usr/lib/jvm/default-java
+java_bin: "{{ java_home }}/bin/java"
+java_minecraft_server_xmx: 2500M
+java_minecraft_server_xms: 512M
+
+hamachi_deb_package_url_amd64: https://www.vpn.net/installers/logmein-hamachi_2.1.0.203-1_amd64.deb
+hamachi_deb_package_url_armhf: https://www.vpn.net/installers/logmein-hamachi_2.1.0.203-1_armhf.deb
+
+system_timezone: Europe/Madrid

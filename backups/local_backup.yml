@@ -1,0 +1,24 @@
+---
+- name: Creates a backup script
+  template:
+    src: templates/backup.sh.j2
+    dest: "{{ minecraft_tools_dir }}/backup.sh"
+    owner: minecraft
+    group: minecraft
+    mode: '0774'
+  vars:
+    - minecraft_ip_server: "{{ hamachi_ip_address.stdout }}"
+- name: Copy the backup ignore file
+  template:
+    src: templates/backupignore.j2
+    dest: "{{ minecraft_tools_dir }}/backupignore"
+    owner: minecraft
+    group: minecraft
+    mode: '0440'
+- name: Creates a cron task to backup
+  cron:
+    name: "minecraft server backup"
+    minute: "0"
+    hour: "23"
+    job: "{{ minecraft_tools_dir }}/backup.sh"
+    user: minecraft
