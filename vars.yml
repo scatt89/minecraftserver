@@ -1,4 +1,5 @@
 ---
+# Minecraft
 minecraft_home_dir: /opt/minecraft
 minecraft_tools_dir: "{{ minecraft_home_dir }}/tools"
 minecraft_server_dir: "{{ minecraft_home_dir }}/server"
@@ -10,12 +11,20 @@ minecraft_ip_server: localhost
 google_drive_backup_max_uploaded: 5
 google_drive_backup_scope: https://www.googleapis.com/auth/drive
 
+# Java
 java_home: /usr/lib/jvm/default-java
 java_bin: "{{ java_home }}/bin/java"
 java_minecraft_server_xmx: 2500M
 java_minecraft_server_xms: 512M
 
+# VPN
+vpn_tool_choosed: zerotier
+
 hamachi_deb_package_url_amd64: https://www.vpn.net/installers/logmein-hamachi_2.1.0.203-1_amd64.deb
 hamachi_deb_package_url_armhf: https://www.vpn.net/installers/logmein-hamachi_2.1.0.203-1_armhf.deb
 
+zerotier_installation_script_url: https://install.zerotier.com
+
 system_timezone: Europe/Madrid
+
+home_user: /home/pi

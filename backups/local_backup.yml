@@ -7,7 +7,7 @@
     group: minecraft
     mode: '0774'
   vars:
-    - minecraft_ip_server: "{{ hamachi_ip_address.stdout }}"
+    - minecraft_ip_server: "{{ vpn_ip_address.stdout }}"
 - name: Copy the backup ignore file
   template:
     src: templates/backupignore.j2

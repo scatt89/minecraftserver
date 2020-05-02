@@ -1,0 +1,11 @@
+---
+- name: Uninstall zerotier pachage
+  apt:
+    name: zerotier-one
+    state: absent
+    purge: yes
+
+- name: Delete installation script
+  file:
+    path: "{{ home_user }}/zerotier_installation.sh"
+    state: absent

@@ -1,0 +1,11 @@
+---
+- name: Uninstall logmein-hamachi
+  apt:
+    name: logmein-hamachi
+    state: absent
+    purge: yes
+
+- name: Delete Hamachi user and network settings
+  file:
+    path: /var/lib/logmein-hamachi
+    state: absent

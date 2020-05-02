@@ -19,10 +19,12 @@
         daemon_reload: yes
 
   tasks:
-    - import_tasks: hamachi/install.yml
-      tags: ['hamachi', 'hamachi_installation']
-    - import_tasks: hamachi/configure.yml
-      tags: ['hamachi', 'hamachi_configuration']
+    - import_tasks: hamachi/hamachi.yml
+      tags: hamachi
+      when: vpn_tool_choosed  == 'hamachi'
+    - import_tasks: zerotier/zerotier.yml
+      tags: zerotier
+      when: vpn_tool_choosed == 'zerotier'
     - import_tasks: java/install.yml
       tags: java
     - import_tasks: minecraft/minecraft.yml

@@ -64,7 +64,7 @@
   lineinfile:
     dest: "{{ minecraft_server_dir }}/server.properties"
     regexp: "^server-ip="
-    line: "server-ip={{ hamachi_ip_address.stdout }}"
+    line: "server-ip={{ vpn_ip_address.stdout }}"
     state: present
 - name: Creates a service file
   template:

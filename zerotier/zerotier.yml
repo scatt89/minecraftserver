@@ -1,0 +1,23 @@
+---
+- name: Download ZeroTier installation script
+  get_url:
+    url: "{{ zerotier_installation_script_url }}"
+    dest: "{{ home_user }}/zerotier_installation.sh"
+    mode: '0550'
+
+- name: Run installation script
+  shell: "{{ home_user }}/zerotier_installation.sh"
+  args:
+    creates: /usr/sbin/zerotier-one
+
+- name: Join network
+  command: >
+    zerotier-cli join {{ zerotier_network_id }}
+  changed_when: false
+
+- name: Register address from Zero Tier network
+  shell: "zerotier-cli listnetworks | grep {{ zerotier_network_id }} | awk '{print $9}' | cut -f1 -d'/'"
+  register: vpn_ip_address
+  changed_when: false
+
+- import_tasks: hamachi/uninstall.yml

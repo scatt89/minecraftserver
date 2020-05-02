@@ -2,9 +2,15 @@
 - name: Setup timezone
   timezone:
     name: "{{ system_timezone }}"
-- name: Creates a cron task to clean the memory cache
+- name: Creates a cron task to clean the memory cache each hour
   cron:
-    name: "clean the memory cache"
+    name: "clean the memory cache each hour"
     minute: "0"
     hour: "*/1"
+    job: "sync; echo 3 > /proc/sys/vm/drop_caches"
+- name: Creates a cron task to clean the memory cache after huge backup tasks
+  cron:
+    name: "clean the memory cache after backups"
+    minute: "5,20"
+    hour: "23"
     job: "sync; echo 3 > /proc/sys/vm/drop_caches"

@@ -1,0 +1,50 @@
+---
+- name: Get architecture based
+  shell: dpkg --print-architecture
+  register: architecture_based
+  changed_when: false
+
+- name: Install Hamachi for amd64 architecture
+  block:
+    - name: Install Hamachi from amd64 package
+      apt:
+        deb: "{{ hamachi_deb_package_url_amd64 }}"
+  when: "'amd64' in architecture_based.stdout"
+
+- name: Install Hamachi for armhf architecture
+  block:
+    - name: Install lsb-base
+      apt:
+        name: lsb-base
+        state: present
+    - name: Install Hamachi from armhf package
+      apt:
+        deb: "{{ hamachi_deb_package_url_armhf }}"
+  when: "'armhf' in architecture_based.stdout"
+
+- name: Hamachi login
+  command: >
+    hamachi login
+  ignore_errors: true
+  register: hamachi_log_response
+  changed_when: "'Already logged in' not in hamachi_log_response.stdout"
+
+- name: Set hamachi nickname
+  command: >
+    hamachi set-nick cacahueteserver
+  ignore_errors: true
+  changed_when: false
+
+- name: Join to hamachi network
+  command: >
+    hamachi join {{ hamachi_network_id }} {{ hamachi_network_pass }}
+  ignore_errors: true
+  register: hamachi_join_response
+  changed_when: "'you are already a member' not in hamachi_join_response.stdout"
+
+- name: Get hamachi my ip address from hamachi network
+  shell: ip addr show ham0 | grep -i inet | grep -i ham0 | awk '{print $2}' | cut -f1 -d/
+  register: vpn_ip_address
+  changed_when: false
+
+- import_tasks: zerotier/uninstall.yml
