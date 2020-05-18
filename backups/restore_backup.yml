@@ -1,7 +1,22 @@
 ---
-- name: Uncompress backup files in the server directories
-  unarchive:
-    src: ./backups/latest.tar.gz
-    dest: "{{ minecraft_home_dir }}"
-    owner: minecraft
-  notify: restart minecraft service
+- hosts: mini2
+  become : yes
+
+  vars_files:
+    - ../vars.yml
+    - ../.keys.yml
+
+  handlers:
+    - name: restart minecraft service
+      systemd:
+        name: minecraft
+        state: restarted
+        daemon_reload: yes
+
+  tasks:
+    - name: Uncompress backup files in the server directories
+      unarchive:
+        src: ./latest.tar.gz
+        dest: "{{ minecraft_home_dir }}"
+        owner: minecraft
+      notify: restart minecraft service
